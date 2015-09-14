@@ -1,11 +1,11 @@
-class Robot():
+class Robot:
         def __init__(self, name):
                 self.legs = Legs()
                 self.arms = Arms()
                 self.head = Head()
                 self.energy = PowerSupply()
                 self.name = name
-        def move(self, moves):
+        def move(self, moves=2):
                 for x in range(0,moves):
                         if self.energy.checkPower() == 0:
                                 print "Cannot move, no power"
@@ -55,7 +55,7 @@ class Robot():
                         print self.name + " says " + self.head.speak(words)
                         self.energy.usePower()
         
-class Legs():
+class Legs:
         def walk(self):
                 return " walked"
         def jump(self):
@@ -63,13 +63,13 @@ class Legs():
         def run(self):
                 return " ran"
 
-class Arms():
+class Arms:
         def lift(self, stuff):
                 return " lifted " + stuff
         def openObject(self, stuff):
                 return " opened " + stuff
 	
-class PowerSupply():
+class PowerSupply:
         def __init__(self):
                 self.power = 5
         def usePower(self):
@@ -83,7 +83,7 @@ class PowerSupply():
         def checkPower(self):
                 return self.power
         
-class Head():
+class Head:
 	def speak (self, words):
 		return words
 
@@ -95,7 +95,10 @@ class AdvancedRobot(Robot):
                 self.energy = PowerSupply()
                 self.name = name
                 self.energy.power = 10
-        def moveFast(self, moves):
+        def recharge(self):
+                self.energy.power = 10
+                print "Fully charged"
+        def fastMove(self, moves):
                 for x in range(0,moves):
                         if self.energy.checkPower() == 0:
                                 print "Cannot move, no power"
@@ -115,11 +118,33 @@ class AdvancedRobot(Robot):
                                 self.run()
                         elif command == "jump":
                                 self.jump()
+                        elif command[:4] == "lift":
+                                self.lift(command[5:])
+                        elif command[:4] == "open":
+                                self.openObject(command[5:])
+                        elif command[:3] == "say":
+                                self.speak(command[4:])
+                        elif command == "recharge":
+                                self.recharge()
+                        elif command[:4] == "move":
+                                self.move(int(command[5:]))
+                        elif command[:9] == "fast move":
+                                self.fastMove(int(command[10:]))
                         else:
                                 print str(command) + " command not found"       
                         
         def showControls(self):
-                print "The acceptable commands are walk, run, and jump."
+                print "The acceptable commands are walk, run, lift item, open item, say words, jump, move #, fast move #, and recharge."
+
+        def explode(self):
+                try:
+                        if self.energy.checkPower() >= 3:
+                                print self.name + " exploded"
+                        else:
+                                raise Exception("Energy too low")
+                except Exception:
+                        print "Energy too low for self destruct. " + self.name + " survived"
+                        
                                 
 class Test:
         def testArms(self):
@@ -137,7 +162,7 @@ class Test:
                 robot1.speak("hello")
         def testAdvanced(self):
                 robot2 = AdvancedRobot("advancedRobot")
-                robot2.moveFast(3)
+                robot2.fastMove(3)
                 robot2.recharge()
                 robot2.run()
                 robot2.walk()
@@ -148,12 +173,17 @@ class Test:
         def testControl(self):
                 robot3 = AdvancedRobot("robo")
                 robot3.showControls()
-                robot3.control(["walk", "run", "jump", "sleep", "jump", "recharge"])
-                
+                #robot3.control(["walk", "run", "jump", "sleep", "jump", "recharge", "lift rock", "open bag", "say", "move 5", "recharge", "fast move 6"])
+                robot3.move(10)
+        def testExplosion(self):
+                robot = AdvancedRobot("robot")
+                robot.move(10)
+                robot.explode()
+                robot.recharge()
+                robot.explode()
             
 test1 = Test()
-#test1.testArms()
-#test1.testLegs()
-#test1.testHead()
-#test1.testAdvanced()
-test1.testControl()
+#test1.testControl()
+
+test1.testExplosion()
+
