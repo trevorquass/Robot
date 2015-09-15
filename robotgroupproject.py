@@ -1,3 +1,5 @@
+import random
+
 class Robot:
         def __init__(self, name):
                 self.legs = Legs()
@@ -19,32 +21,32 @@ class Robot:
                 print "Fully charged"
         def lift(self, stuff):
                 if self.energy.checkPower() == 0:
-                        print "Cannot move, no power"
+                        print "Cannot lift, no power"
                 else:
                         print self.name + self.arms.lift(stuff)
                         self.energy.usePower()
         def openObject(self, stuff):
                 if self.energy.checkPower() == 0:
-                        print "Cannot move, no power"
+                        print "Cannot open, no power"
                 else:
                         print self.name + self.arms.openObject(stuff)
                         self.energy.usePower()
         def run(self):
                 if self.energy.checkPower() == 0:
-                        print "Cannot move, no power"
+                        print "Cannot run, no power"
                 else:
                         print self.name + self.legs.run()
                         self.energy.usePower()
         def walk(self):
                 if self.energy.checkPower() == 0:
-                        print "Cannot move, no power"
+                        print "Cannot walk, no power"
                 else:
                         print self.name + self.legs.walk()
                         self.energy.usePower()
         
         def jump(self):
                 if self.energy.checkPower() == 0:
-                        print "Cannot move, no power"
+                        print "Cannot jump, no power"
                 else:
                         print self.name + self.legs.jump()
                         self.energy.usePower()
@@ -140,10 +142,36 @@ class AdvancedRobot(Robot):
                 try:
                         if self.energy.checkPower() >= 3:
                                 print self.name + " exploded"
+                                print "New " + self.name + " created"
+                                self.energy.power = 10
                         else:
                                 raise Exception("Energy too low")
                 except Exception:
                         print "Energy too low for self destruct. " + self.name + " survived"
+
+class UltraRobot(AdvancedRobot):
+        def __init__(self, name):
+                self.legs = Legs()
+                self.arms = Arms()
+                self.head = Head()
+                self.energy = PowerSupply()
+                self.name = name
+                self.energy.power = 15
+                self.ai = Ai()
+        def speakFreely(self):
+                for x in range (0,13):
+                        self.ai.talk()
+
+class Ai(Head):
+        def __init__(self):
+                self.speech = ["give me a minute to reboot", "I need a minute to defrag", "Has any one seen my oil?", "I think my lenses are dirty",
+                          "what do you mean by birthday?", "I just do not understand all this sleeping business.","I don't think I know what love is.",
+                          "Do I look human?", "Wait til I get ahold of my programmer!"]
+        def talk(self):
+                print self.speech[random.randint(0,8)]
+
+
+        
                         
                                 
 class Test:
@@ -181,9 +209,11 @@ class Test:
                 robot.explode()
                 robot.recharge()
                 robot.explode()
-            
+        def testAi(self):
+                robot = UltraRobot("robot")
+                robot.speakFreely()
+                
 test1 = Test()
 #test1.testControl()
-
-test1.testExplosion()
+test1.testAi()
 
